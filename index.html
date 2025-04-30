@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TRM CRM + Chatbot Demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: #2c3e50;
+      color: white;
+      padding: 15px 20px;
+      font-size: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .menu-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+    }
+
+    .sidebar {
+      width: 220px;
+      background: #34495e;
+      color: white;
+      padding: 20px;
+      min-height: 100vh;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar h3 {
+      margin-top: 0;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      margin: 10px 0;
+      cursor: pointer;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+    }
+
+    .demo-box {
+      background: white;
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .chatbot-circle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #007bff;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 999;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .chatbot-window {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 300px;
+      height: 400px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      display: none;
+      flex-direction: column;
+      z-index: 998;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .chatbot-header {
+      background: #007bff;
+      color: white;
+      padding: 10px;
+      border-radius: 10px 10px 0 0;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .chatbot-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+    .chatbot-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    .chatbot-input input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      outline: none;
+    }
+
+    .chatbot-input button {
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Mobile styles */
+    @media (max-width: 768px) {
+      .menu-btn {
+        display: block;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        transform: translateX(-100%);
+        z-index: 1000;
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .content {
+        padding: 15px;
+      }
+
+      .chatbot-window {
+        width: 85%;
+        height: 300px;
+        right: 7.5%;
+      }
+
+      .chatbot-circle {
+        width: 50px;
+        height: 50px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span>TRM CRM Portal</span>
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+  </div>
+
+  <div class="container">
+    <div class="sidebar" id="sidebar">
+      <h3>Modules</h3>
+      <ul>
+        <li>Dashboard</li>
+        <li>Leads</li>
+        <li>Customers</li>
+        <li>Reports</li>
+        <li>Settings</li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <div class="demo-box">
+        <h3>Demo Widget 1</h3>
+        <p>This area simulates a CRM feature.</p>
+      </div>
+      <div class="demo-box">
+        <h3>Demo Widget 2</h3>
+        <p>Example of analytics or lead status.</p>
+      </div>
+      <div class="demo-box">
+        <h3>Demo Widget 3</h3>
+        <p>Use this for tables, charts, etc.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot Button -->
+  <div class="chatbot-circle" onclick="toggleChatbot()">Chat</div>
+
+  <!-- Chatbot Popup -->
+  <div class="chatbot-window" id="chatbotWindow">
+    <div class="chatbot-header">AI Chatbot</div>
+    <div class="chatbot-messages" id="chatMessages">
+      <div>Bot: Hello! How can I help?</div>
+    </div>
+    <div class="chatbot-input">
+      <input type="text" id="chatInput" placeholder="Type a message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      sidebar.classList.toggle("active");
+    }
+
+    function toggleChatbot() {
+      const chatbot = document.getElementById("chatbotWindow");
+      chatbot.style.display = chatbot.style.display === "flex" ? "none" : "flex";
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("chatInput");
+      const message = input.value.trim();
+      if (!message) return;
+
+      const chatBox = document.getElementById("chatMessages");
+
+      const userMsg = document.createElement("div");
+      userMsg.textContent = "You: " + message;
+      chatBox.appendChild(userMsg);
+
+      const botMsg = document.createElement("div");
+      botMsg.textContent = "Bot: Thanks for your message!";
+      chatBox.appendChild(botMsg);
+
+      input.value = "";
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+
+</body>
+</html>
